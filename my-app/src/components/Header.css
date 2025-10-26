@@ -1,0 +1,36 @@
+.header {
+  background-color: rgba(57, 101, 145, 1);
+  color: white;
+  padding: 0.5rem 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+  margin: 0 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  max-height: 53px;
+}
+
+.settings-button {
+  background-color: transparent;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.settings-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: scale(1.05);
+  border-color: unset;
+}
