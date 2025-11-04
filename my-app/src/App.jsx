@@ -1,9 +1,11 @@
-
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import LoginPage from './pages/LoginPage';
-import HomePage from './pages/HomePage';
-import Header from './components/Header';
-import './App.css';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import LoginPage from "./pages/LoginPage";
+import HomePage from "./pages/HomePage";
+import Header from "./components/Header";
+import "./App.css";
+import Layout from "./components/layout";
+import ItemPage from "./pages/ItemPage";
+import AssetsPage from "./pages/AssetsPage";
 
 function App() {
   return (
@@ -14,6 +16,10 @@ function App() {
           <Routes>
             <Route path="/" element={<LoginPage />} />
             <Route path="/home" element={<HomePage />} />
+            <Route element={<Layout />}>
+              <Route path="/patrimonios" element={<AssetsPage />} />
+              <Route path="/:patrimonios/:item" element={<ItemPage />} />
+            </Route>
           </Routes>
         </main>
       </div>
@@ -21,4 +27,4 @@ function App() {
   );
 }
 
-export default App
+export default App;
