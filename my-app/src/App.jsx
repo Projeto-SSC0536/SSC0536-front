@@ -6,6 +6,7 @@ import "./App.css";
 import Layout from "./components/layout";
 import ItemPage from "./pages/ItemPage";
 import AssetsPage from "./pages/AssetsPage";
+import NewAssetsPage from "./pages/NewAssetPage";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
             <Route element={<Layout />}>
               <Route path="/patrimonios" element={<AssetsPage />} />
               <Route path="/:patrimonios/:item" element={<ItemPage />} />
+              <Route path="/:patrimonios/novo" element={<NewAssetsPage />} />
             </Route>
           </Routes>
         </main>
