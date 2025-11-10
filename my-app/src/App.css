@@ -1,7 +1,19 @@
 #root {
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
   width: 100%;
-  place-content: center;
+  min-height: 100vh;
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+  margin-top: -69px; /* Altura do header */
+  width: 100%;
+  max-width: 1200px;
+  align-content: center;
+  align-self: center;
 }
