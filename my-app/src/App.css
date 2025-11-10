@@ -13,7 +13,7 @@
 
 main {
   flex: 1;
-  margin-top: -69px; /* Altura do header */
+  padding-top: 69px;
   width: 100%;
   max-width: 1200px;
   align-content: center;
