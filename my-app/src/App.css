@@ -16,6 +16,6 @@ main {
   width: 100%;
   padding-top: 69px;
   align-content: start;
-  max-width: 1200px;
   align-self: center;
+  display: flex;
 }
