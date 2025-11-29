@@ -13,9 +13,9 @@
 
 main {
   flex: 1;
-  padding-top: 69px;
   width: 100%;
+  padding-top: 69px;
+  align-content: start;
   max-width: 1200px;
-  align-content: center;
   align-self: center;
 }

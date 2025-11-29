@@ -1,12 +1,12 @@
 .assets-content {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
   padding-inline: 2rem;
   box-sizing: border-box;
   width: 100%;
   max-width: 100vw;
   overflow-x: hidden;
+  padding-top: 0;
 }
 
 .titulo {
@@ -36,19 +36,19 @@
   background-color: white;
 }
 
-.botao-adicionar {
-  background-color: #396591;
-  color: white;
+.botao-primario {
+  padding: 0.75rem;
+  background: rgba(57, 101, 145, 1);
+  color: #fff;
   border: none;
-  padding: 0.6rem 1.2rem;
-  border-radius: 8px;
-  font-weight: 500;
+  border-radius: 4px;
+  font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background 0.3s;
 }
 
-.botao-adicionar:hover {
-  background-color: #24486b;
+.botao-primario:hover {
+  background: rgb(26, 52, 79);
 }
 
 .tabela-patrimonios {

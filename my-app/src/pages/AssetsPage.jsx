@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import "./AssetsPage.css";
+import { useNavigate } from "react-router-dom";
 
 function AssetsPage() {
   const [search, setSearch] = useState("");
-  
+  const navigate = useNavigate();
+
   // Exemplo de dados
   const [patrimonios] = useState([
     { nome: "Mesa com 6 lugares", codigo: "001", localizacao: "Refeitório", status: "Ativo" },
@@ -27,7 +29,7 @@ function AssetsPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <button className="botao-adicionar">Adicionar Patrimônio</button>
+        <button className="botao-primario" onClick={() => navigate("/patrimonios/novo")}>Adicionar Patrimônio</button>
       </div>
 
       <table className="tabela-patrimonios">
