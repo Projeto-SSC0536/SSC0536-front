@@ -11,6 +11,8 @@ function ItemPage() {
   const [creatorName, setCreatorName] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -30,7 +32,7 @@ function ItemPage() {
             if (mounted) setCreatorName("");
           }
         } else if (mounted) setCreatorName("");
-      } catch (err) {
+      } catch {
         setError("Erro ao carregar patrimônio");
       } finally {
         if (mounted) setLoading(false);
@@ -45,22 +47,41 @@ function ItemPage() {
     setItem((prev) => ({ ...prev, [name]: value }));
   }
 
-  function handleSave(e) {
+  async function handleSave(e) {
     e.preventDefault();
-    // Substitua por chamada real de API
-    console.log("Salvando item:", item);
-    alert("Alterações salvas (simulado)");
+    if (!item) return;
+    try {
+      setSaving(true);
+      const payload = {
+        localizacao: item.localizacao,
+        status: item.status,
+      };
+      await api.put(`/patrimonios/${id}`, payload);
+      alert("Alterações salvas com sucesso!");
+    } catch {
+      alert("Erro ao salvar alterações.");
+    } finally {
+      setSaving(false);
+    }
   }
 
-  function handleDelete() {
+  async function handleDelete() {
     const ok = window.confirm(
       "Tem certeza que deseja deletar este patrimônio?"
     );
     if (!ok) return;
-    // Chamada real de API para deletar aqui
-    console.log("Deletando item id=", item.id);
-    alert("Patrimônio deletado (simulado)");
-    navigate("/home");
+    try {
+      setDeleting(true);
+      await api.del(`/patrimonios/${id}`);
+      // Notifica a sidebar para recarregar a lista
+      window.dispatchEvent(new Event('patrimonios:refresh'));
+      alert("Patrimônio deletado com sucesso!");
+      navigate("/patrimonios");
+    } catch {
+      alert("Erro ao deletar patrimônio.");
+    } finally {
+      setDeleting(false);
+    }
   }
 
   function formatDate(dateString) {
@@ -122,15 +143,16 @@ function ItemPage() {
           </fieldset>
 
           <div className="form-actions">
-            <button type="submit" className="btn btn-primary">
-              Salvar alterações
+            <button type="submit" className="btn btn-primary" disabled={saving}>
+              {saving ? "Salvando..." : "Salvar alterações"}
             </button>
             <button
               type="button"
               className="btn btn-danger"
               onClick={handleDelete}
+              disabled={deleting}
             >
-              Deletar patrimônio
+              {deleting ? "Deletando..." : "Deletar patrimônio"}
             </button>
           </div>
         </form>

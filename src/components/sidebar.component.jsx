@@ -9,6 +9,7 @@ export default function Sidebar() {
   const [expanded, setExpanded] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
   const navigate = useNavigate();
 
   const sidebarRef = useRef(null);
@@ -63,6 +64,13 @@ export default function Sidebar() {
     }
     loadData();
     return () => { mounted = false; };
+  }, [refreshKey]);
+
+  // Ouve eventos globais para atualizar a lista (ex.: após deletar/criar)
+  useEffect(() => {
+    const onRefresh = () => setRefreshKey((k) => k + 1);
+    window.addEventListener("patrimonios:refresh", onRefresh);
+    return () => window.removeEventListener("patrimonios:refresh", onRefresh);
   }, []);
 
   useEffect(() => {
