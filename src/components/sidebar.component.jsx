@@ -2,29 +2,13 @@ import "./sidebar.style.css";
 import { useState, useRef, useEffect } from "react";
 import { ChevronDown, ChevronUp, Menu } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
-const mockList = [
-  {
-    id: "patrimonios",
-    name: "Patrimônios",
-    items: [
-      { id: "item-mesa", name: "mesa" },
-      { id: "item-cadeira", name: "cadeira" },
-    ],
-  },
-  {
-    id: "almoxarifado",
-    name: "Almoxarifado",
-    items: [
-      { id: "item-arroz", name: "arroz" },
-      { id: "item-feijao", name: "feijao" },
-    ],
-  },
-];
+import api from "../services/api";
 
 export default function Sidebar() {
   const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const sidebarRef = useRef(null);
@@ -37,6 +21,49 @@ export default function Sidebar() {
         : [...prev, categoryId]
     );
   };
+
+  useEffect(() => {
+    let mounted = true;
+    async function loadData() {
+      setLoading(true);
+      try {
+        const patrimonios = await api.get("/patrimonios");
+        
+        if (mounted) {
+          const categoriesData = [
+            {
+              id: "patrimonios",
+              name: "Patrimônios",
+              items: Array.isArray(patrimonios) 
+                ? patrimonios.map(p => ({
+                    id: p.id || p.codigo,
+                    name: p.nome || p.identificacao_fisica || "Sem nome"
+                  }))
+                : []
+            },
+            {
+              id: "almoxarifado",
+              name: "Almoxarifado",
+              items: []
+            }
+          ];
+          setCategories(categoriesData);
+        }
+      } catch (err) {
+        console.error("Erro ao carregar dados da sidebar:", err);
+        if (mounted) {
+          setCategories([
+            { id: "patrimonios", name: "Patrimônios", items: [] },
+            { id: "almoxarifado", name: "Almoxarifado", items: [] }
+          ]);
+        }
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    }
+    loadData();
+    return () => { mounted = false; };
+  }, []);
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -66,7 +93,12 @@ export default function Sidebar() {
 
       <nav ref={sidebarRef} className={`sidebar ${open ? "open" : ""}`}>
         <ul>
-          {mockList.map((cat) => (
+          {loading ? (
+            <li className="category">
+              <span style={{ padding: "1rem" }}>Carregando...</span>
+            </li>
+          ) : (
+            categories.map((cat) => (
             <li key={cat.id} className="category">
               <div
                 className="category-header"
@@ -102,7 +134,8 @@ export default function Sidebar() {
                 </ul>
               )}
             </li>
-          ))}
+            ))
+          )}
         </ul>
       </nav>
     </div>
