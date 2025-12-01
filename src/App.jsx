@@ -8,6 +8,7 @@ import ItemPage from "./pages/ItemPage";
 import AssetsPage from "./pages/AssetsPage";
 import NewAssetsPage from "./pages/NewAssetPage";
 import AlmoxarifadoPage from "./pages/AlmoxarifadoPage";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
@@ -17,8 +18,16 @@ function App() {
         <main>
           <Routes>
             <Route path="/" element={<LoginPage />} />
-            <Route path="/home" element={<HomePage />} />
-            <Route element={<Layout />}>
+            <Route path="/home" element={
+              <ProtectedRoute>
+                <HomePage />
+              </ProtectedRoute>
+            } />
+            <Route element={
+              <ProtectedRoute>
+                <Layout />
+              </ProtectedRoute>
+            }>
               <Route path="/patrimonios" element={<AssetsPage />} />
               <Route path="/:patrimonios/:item" element={<ItemPage />} />
               <Route path="/:patrimonios/novo" element={<NewAssetsPage />} />

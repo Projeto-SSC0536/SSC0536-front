@@ -35,12 +35,7 @@
   height: 100%;
   z-index: 5000;
 }
-
-.logo {
-  margin-bottom: 20px;
-  font-size: 20px;
-}
-
+  
 .sidebar ul {
   list-style: none;
   padding: 0;
