@@ -1,8 +1,12 @@
 .new-assets-content {
   display: flex;
   flex-direction: column;
-  width: 100vh;
-  padding-inline: 2rem;
+  width: 100%;
+  max-width: 100%;
+  padding-inline: 1rem;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  max-width: 900px;
 }
 
 .campos-container {
@@ -35,7 +39,8 @@
   font-size: 1rem;
   cursor: pointer;
   transition: background 0.3s;
-  width: 200px;
+  width: auto;
+  min-width: 140px;
 }
 
 .botao-primario:hover {
@@ -51,11 +56,18 @@
   font-size: 1rem;
   cursor: pointer;
   transition: background 0.3s;
-  width: 200px;
+  width: auto;
+  min-width: 140px;
 }
 
 .botao-danger:hover {
   background: rgb(79, 26, 26);
+}
+
+.botoes-container {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
 .h4 {

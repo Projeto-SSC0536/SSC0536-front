@@ -38,7 +38,7 @@ function NewAssetsPage() {
   }
 
   return (
-    <main className="new-assets-content">
+    <div className="new-assets-content">
       <h1 className="titulo">Novo patrimônio</h1>
 
       <form className="campos-container" onSubmit={handleSubmit}>
@@ -89,11 +89,10 @@ function NewAssetsPage() {
 
         {error && <div className="erro">{error.message || String(error)}</div>}
 
-        <div className="form-actions">
+        <div className="botoes-container">
           <button className="botao-primario" type="submit" disabled={loading}>
             {loading ? "Enviando..." : "Adicionar Patrimônio"}
           </button>
-          <div style={{ height: "12px" }}></div>
           <button
             type="button"
             className="botao-danger"
@@ -103,7 +102,7 @@ function NewAssetsPage() {
           </button>
         </div>
       </form>
-    </main>
+    </div>
   );
 }
 
