@@ -7,6 +7,7 @@ import Layout from "./components/layout";
 import ItemPage from "./pages/ItemPage";
 import AssetsPage from "./pages/AssetsPage";
 import NewAssetsPage from "./pages/NewAssetPage";
+import AlmoxarifadoPage from "./pages/AlmoxarifadoPage";
 
 function App() {
   return (
@@ -21,6 +22,8 @@ function App() {
               <Route path="/patrimonios" element={<AssetsPage />} />
               <Route path="/:patrimonios/:item" element={<ItemPage />} />
               <Route path="/:patrimonios/novo" element={<NewAssetsPage />} />
+              <Route path="/almoxarifado" element={<AlmoxarifadoPage />} />
+              <Route path="/:almoxarifado/:item" element={<ItemPage />} />
             </Route>
           </Routes>
         </main>
