@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  web:
+    build: .
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./:/usr/src/app:cached
+      - /usr/src/app/node_modules
+    environment:
+      - NODE_ENV=development
+    # Ensure dependencies are installed inside the container and start Vite bound to 0.0.0.0
+    command: sh -c "npm install --legacy-peer-deps && npm run dev -- --host 0.0.0.0"
+    tty: true

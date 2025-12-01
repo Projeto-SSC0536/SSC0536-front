@@ -1,0 +1,103 @@
+.page-wrap{
+  width: 100vh;
+}
+
+.item-page {
+  display: flex;
+  flex-direction: column;
+  padding-inline: 2rem;
+  text-align: left;
+  width: 100%;
+  max-width: 720px;
+}
+
+.item-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.item-name {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #1f2937;
+}
+
+.item-code {
+  font-size: 0.95rem;
+  color: #6b7280;
+}
+
+.item-form {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.form-row label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.form-row input,
+.form-row select {
+  flex: 1;
+  border: 1px solid #ccc;
+  padding: 0.75rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  background-color: #fff;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 1rem;
+  color: black;
+}
+
+.readonly-group {
+  margin-top: 0.5rem;
+  border: none;
+  padding: 0;
+}
+
+.readonly-group input{
+  background-color: #d8d9db;
+  cursor: not-allowed;
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.btn {
+  padding: 0.6rem 0.9rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  width:200px;
+}
+
+.btn-primary {
+  background: rgba(57, 101, 145, 1);
+  color: white;
+}
+
+.btn-danger {
+  background: rgba(145, 57, 57, 1);
+  color: white;
+}
+
+/* Mobile tweaks */
+@media (max-width: 560px) {
+  .item-card { padding: 1rem; }
+  .form-actions { flex-direction: column; }
+}

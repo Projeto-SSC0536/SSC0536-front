@@ -3,9 +3,9 @@ import { Outlet } from "react-router-dom";
 
 export default function Layout() {
   return (
-    <div style={{ display: "flex", flexGrow: 1 }}>
+    <div style={{ display: "flex", height: "calc(100% - 40px)", width: "calc(100% - 220px)", marginLeft: "220px", marginTop: "40px"}}>
       <Sidebar />
-      <div style={{ flex: 1, height: "auto" }}>
+      <div >
         <Outlet />
       </div>
     </div>
