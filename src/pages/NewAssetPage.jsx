@@ -1,5 +1,6 @@
 import "./NewAssetPage.css";
 import { useState } from "react";
+import Select from "react-select";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 
@@ -70,22 +71,49 @@ function NewAssetsPage() {
         />
 
         <label className="h4">Status *</label>
-        <select
-          id="status"
-          name="status"
-          className="campo"
-          value={status}
-          onChange={(e) => setStatus(e.target.value)}
-          required
-        >
-          <option value="" disabled>
-            Insira o status do patrimônio
-          </option>
-          <option value="ativo">Ativo</option>
-          <option value="inativo">Inativo</option>
-          <option value="em manutenção">Em manutenção</option>
-          <option value="perdido">Perdido</option>
-        </select>
+        <div style={{ width: "100%" }}>
+          <Select
+            inputId="status"
+            name="status_select"
+            classNamePrefix="react-select"
+            className="react-select-container"
+            value={
+              [
+                { value: "ativo", label: "Ativo" },
+                { value: "inativo", label: "Inativo" },
+                { value: "manutenção", label: "Manutenção" },
+                { value: "quebrado", label: "Quebrado" },
+              ].find((o) => o.value === status) || null
+            }
+            onChange={(opt) => setStatus(opt ? opt.value : "")}
+            options={[
+              { value: "ativo", label: "Ativo" },
+              { value: "inativo", label: "Inativo" },
+              { value: "manutenção", label: "Manutenção" },
+              { value: "quebrado", label: "Quebrado" },
+            ]}
+            placeholder="Insira o status do patrimônio"
+            menuPortalTarget={document.body}
+            menuPosition="fixed"
+            styles={{
+              menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+              control: (base) => ({
+                ...base,
+                borderRadius: 4,
+                borderColor: "#ccc",
+                minHeight: 44,
+                boxShadow: "none",
+              }),
+              valueContainer: (base) => ({ ...base, padding: "0 8px" }),
+              placeholder: (base) => ({
+                ...base,
+                color: "#666",
+                marginLeft: 2,
+              }),
+            }}
+          />
+          <input type="hidden" name="status" value={status} required />
+        </div>
 
         {error && <div className="erro">{error.message || String(error)}</div>}
 

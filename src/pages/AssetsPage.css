@@ -26,12 +26,6 @@
   flex-wrap: wrap;
 }
 
-@media (min-width: 768px) {
-  .assets-content {
-    margin: 0 0 0 auto;
-  }
-}
-
 .barra-busca {
   flex: 1;
   min-width: 200px;
