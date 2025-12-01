@@ -36,7 +36,7 @@ function AssetsPage() {
   );
 
   return (
-    <main className="assets-content">
+    <div className="assets-content">
       <h1 className="titulo">Patrimônios</h1>
 
       <div className="linha-superior">
@@ -90,7 +90,7 @@ function AssetsPage() {
           </tbody>
         </table>
       )}
-    </main>
+    </div>
   );
 }
 

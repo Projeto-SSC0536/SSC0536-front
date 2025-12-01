@@ -1,22 +1,27 @@
 .app-layout {
-  display: block;
-  height: calc(100% - 40px);
-  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .app-content {
-  width: 100%;
   box-sizing: border-box;
   padding: 1rem;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1 1 auto;
+  width: 100%;
 }
 
 /* Desktop */
 @media (min-width: 768px) {
   .app-layout {
     display: flex;
+    flex-direction: row;
   }
   .app-content {
     margin-left: 220px;
-    width: calc(100% - 220px);
+    width: auto;
   }
 }

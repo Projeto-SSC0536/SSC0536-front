@@ -8,9 +8,24 @@ function AlmoxarifadoPage() {
 
   // Exemplo de dados
   const [almoxarifado] = useState([
-    { nome: "Mesa com 6 lugares", codigo: "001", localizacao: "Refeitório", dataValidade: "2025-12-31" },
-    { nome: "Cadeira", codigo: "002", localizacao: "Refeitório", dataValidade: "2026-06-30" },
-    { nome: "Aspirador de pó", codigo: "003", localizacao: "Depósito", dataValidade: "2024-11-15" },
+    {
+      nome: "Mesa com 6 lugares",
+      codigo: "001",
+      localizacao: "Refeitório",
+      dataValidade: "2025-12-31",
+    },
+    {
+      nome: "Cadeira",
+      codigo: "002",
+      localizacao: "Refeitório",
+      dataValidade: "2026-06-30",
+    },
+    {
+      nome: "Aspirador de pó",
+      codigo: "003",
+      localizacao: "Depósito",
+      dataValidade: "2024-11-15",
+    },
   ]);
 
   const filtrados = almoxarifado.filter((p) =>
@@ -18,7 +33,7 @@ function AlmoxarifadoPage() {
   );
 
   return (
-    <main className="assets-content">
+    <div className="assets-content">
       <h1 className="titulo">Almoxarifado</h1>
 
       <div className="linha-superior">
@@ -29,7 +44,12 @@ function AlmoxarifadoPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <button className="botao-primario" onClick={() => navigate("/almoxarifado/novo")}>Adicionar Item</button>
+        <button
+          className="botao-primario"
+          onClick={() => navigate("/almoxarifado/novo")}
+        >
+          Adicionar Item
+        </button>
       </div>
 
       <table className="tabela-patrimonios">
@@ -59,7 +79,7 @@ function AlmoxarifadoPage() {
           )}
         </tbody>
       </table>
-    </main>
+    </div>
   );
 }
 
