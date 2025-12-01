@@ -4,6 +4,15 @@ async function request(path, opts = {}) {
   const url = `${API_BASE}/${String(path).replace(/^\/+/, '')}`;
   const options = { ...opts };
 
+  // Adiciona o token de autenticação se existir
+  const token = localStorage.getItem('token');
+  if (token) {
+    options.headers = { 
+      'Authorization': `Bearer ${token}`,
+      ...(options.headers || {}) 
+    };
+  }
+
   if (options.body && typeof options.body === 'object' && !(options.body instanceof FormData)) {
     options.body = JSON.stringify(options.body);
     options.headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };

@@ -1,12 +1,20 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGear } from '@fortawesome/free-solid-svg-icons'
-import { useLocation } from 'react-router-dom';
+import { faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons'
+import { useLocation, useNavigate } from 'react-router-dom';
 import './Header.css';
 
 function Header() {
   const location = useLocation();
+  const navigate = useNavigate();
   const isLoginPage = location.pathname === '/';
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    sessionStorage.clear();
+    navigate('/');
+  };
 
 return (
     <header className={`header ${isLoginPage ? 'header-login' : ''}`}>
@@ -15,9 +23,12 @@ return (
                 <img src="src/assets/logo.png" alt="Logo Cantinho Fraterno" className="logo" />
             </div>
             {!isLoginPage && (
-                <button className="settings-button" onClick={() => console.log('Settings clicked')}>
-                    <FontAwesomeIcon icon={faGear} style={{color: "#fff",}} />
-                    Configurações
+                <button
+                    className="settings-button"
+                    onClick={handleLogout}
+                >
+                    <FontAwesomeIcon icon={faArrowRightFromBracket} style={{ color: "#fff" }} />
+                    Sair
                 </button>
             )}
         </div>
