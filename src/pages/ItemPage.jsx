@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import api from "../services/api";
 import "./ItemPage.css";
 
 function ItemPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Determina o tipo baseado na URL
+  const isAlmoxarifado = location.pathname.startsWith('/almoxarifado');
+  const itemType = isAlmoxarifado ? 'almoxarifado' : 'patrimonios';
 
   const [item, setItem] = useState(null);
   const [creatorName, setCreatorName] = useState("");
@@ -20,8 +25,12 @@ function ItemPage() {
       setLoading(true);
       setError(null);
       try {
-        const data = await api.get(`/patrimonios/${id}`);
-        if (mounted) setItem(data);
+        const data = await api.get(`/${itemType}/${id}`);
+        // Usa apenas data_validade para almoxarifado
+        const normalized = isAlmoxarifado
+          ? { ...data, data_validade: data.data_validade || "" }
+          : data;
+        if (mounted) setItem(normalized);
         // Buscar nome do usuário criador
         if (data && data.criado_por) {
           try {
@@ -33,14 +42,14 @@ function ItemPage() {
           }
         } else if (mounted) setCreatorName("");
       } catch {
-        setError("Erro ao carregar patrimônio");
+        setError(`Erro ao carregar ${isAlmoxarifado ? 'item' : 'patrimônio'}`);
       } finally {
         if (mounted) setLoading(false);
       }
     }
     if (id) fetchItem();
     return () => { mounted = false; };
-  }, [id]);
+  }, [id, itemType, isAlmoxarifado]);
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -52,11 +61,44 @@ function ItemPage() {
     if (!item) return;
     try {
       setSaving(true);
-      const payload = {
-        localizacao: item.localizacao,
-        status: item.status,
+      // Converte para ISO 8601 com milissegundos (YYYY-MM-DDTHH:MM:SS.sssZ)
+      const toISOZ = (val) => {
+        if (!val) return "";
+        // 1) YYYY-MM-DD → UTC meia-noite
+        if (/^\d{4}-\d{2}-\d{2}$/.test(val)) {
+          return `${val}T00:00:00.000Z`;
+        }
+        // 2) DD/MM/YYYY → UTC meia-noite
+        const m = val.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+        if (m) {
+          const [_, dd, mm, yyyy] = m;
+          return `${yyyy}-${mm}-${dd}T00:00:00.000Z`;
+        }
+        // 3) Tenta parsear normalmente
+        const d = new Date(val);
+        return isNaN(d) ? String(val) : d.toISOString();
       };
-      await api.put(`/patrimonios/${id}`, payload);
+
+      const payload = isAlmoxarifado 
+        ? {
+            categoria: item.categoria,
+            data_validade: toISOZ(item.data_validade),
+          }
+        : {
+            localizacao: item.localizacao,
+            status: item.status,
+          };
+      await api.put(`/${itemType}/${id}`, payload);
+      // Refaz o GET para confirmar persistência e sincronizar com o backend
+      try {
+        const updated = await api.get(`/${itemType}/${id}`);
+        const normalizedUpdated = isAlmoxarifado
+          ? { ...updated, data_validade: updated.data_validade || "" }
+          : updated;
+        setItem(normalizedUpdated);
+      } catch { /* ignore re-fetch errors */ }
+      // Atualiza sidebar caso nome/categoria mudem
+      window.dispatchEvent(new Event('patrimonios:refresh'));
       alert("Alterações salvas com sucesso!");
     } catch {
       alert("Erro ao salvar alterações.");
@@ -67,18 +109,18 @@ function ItemPage() {
 
   async function handleDelete() {
     const ok = window.confirm(
-      "Tem certeza que deseja deletar este patrimônio?"
+      `Tem certeza que deseja deletar este ${isAlmoxarifado ? 'item' : 'patrimônio'}?`
     );
     if (!ok) return;
     try {
       setDeleting(true);
-      await api.del(`/patrimonios/${id}`);
+      await api.del(`/${itemType}/${id}`);
       // Notifica a sidebar para recarregar a lista
       window.dispatchEvent(new Event('patrimonios:refresh'));
-      alert("Patrimônio deletado com sucesso!");
-      navigate("/patrimonios");
+      alert(`${isAlmoxarifado ? 'Item' : 'Patrimônio'} deletado com sucesso!`);
+      navigate(`/${itemType}`);
     } catch {
-      alert("Erro ao deletar patrimônio.");
+      alert(`Erro ao deletar ${isAlmoxarifado ? 'item' : 'patrimônio'}.`);
     } finally {
       setDeleting(false);
     }
@@ -89,46 +131,82 @@ function ItemPage() {
     const d = new Date(dateString);
     if (isNaN(d)) return dateString;
     const pad = (n) => n.toString().padStart(2, '0');
-    return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${pad(d.getFullYear())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  }
+
+  function formatDateOnly(dateString) {
+    if (!dateString) return "";
+    // Preferir componentes UTC para evitar "dia anterior/seguinte" por fuso
+    const d = new Date(dateString);
+    if (isNaN(d)) return dateString;
+    const pad = (n) => n.toString().padStart(2, '0');
+    return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`;
   }
 
   if (loading) return <div className="page-wrap">Carregando...</div>;
   if (error) return <div className="page-wrap">{error}</div>;
-  if (!item) return <div className="page-wrap">Patrimônio não encontrado</div>;
+  if (!item) return <div className="page-wrap">{isAlmoxarifado ? 'Item' : 'Patrimônio'} não encontrado</div>;
 
   return (
     <div className="page-wrap">
       <div className="item-page">
         <header className="item-header">
           <h2 className="item-name">{item.nome}</h2>
-          <div className="item-code">{item.identificacao_fisica}</div>
+          <div className="item-code">{isAlmoxarifado ? `ID: ${item.id}` : item.identificacao_fisica}</div>
         </header>
 
         <form className="item-form" onSubmit={handleSave}>
-          <div className="form-row">
-            <label htmlFor="location">Localização</label>
-            <input
-              id="location"
-              name="localizacao"
-              value={item.localizacao || ""}
-              onChange={handleChange}
-            />
-          </div>
+          {isAlmoxarifado ? (
+            <>
+              <div className="form-row">
+                <label htmlFor="categoria">Categoria</label>
+                <input
+                  id="categoria"
+                  name="categoria"
+                  value={item.categoria || ""}
+                  onChange={handleChange}
+                />
+              </div>
 
-          <div className="form-row">
-            <label htmlFor="status">Status</label>
-            <select
-              id="status"
-              name="status"
-              value={item.status || ""}
-              onChange={handleChange}
-            >
-              <option>Ativo</option>
-              <option>Inativo</option>
-              <option>Em manutenção</option>
-              <option>Perdido</option>
-            </select>
-          </div>
+              <div className="form-row">
+                <label htmlFor="data_validade">Data de Validade</label>
+                <input
+                  id="data_validade"
+                  name="data_validade"
+                  type="date"
+                  value={formatDateOnly(item.data_validade)}
+                  onChange={handleChange}
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="form-row">
+                <label htmlFor="location">Localização</label>
+                <input
+                  id="location"
+                  name="localizacao"
+                  value={item.localizacao || ""}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="form-row">
+                <label htmlFor="status">Status</label>
+                <select
+                  id="status"
+                  name="status"
+                  value={item.status || ""}
+                  onChange={handleChange}
+                >
+                  <option>Ativo</option>
+                  <option>Inativo</option>
+                  <option>Em manutenção</option>
+                  <option>Perdido</option>
+                </select>
+              </div>
+            </>
+          )}
 
           <fieldset className="readonly-group" disabled>
             <div className="form-row">
@@ -152,7 +230,7 @@ function ItemPage() {
               onClick={handleDelete}
               disabled={deleting}
             >
-              {deleting ? "Deletando..." : "Deletar patrimônio"}
+              {deleting ? "Deletando..." : `Deletar ${isAlmoxarifado ? 'item' : 'patrimônio'}`}
             </button>
           </div>
         </form>
