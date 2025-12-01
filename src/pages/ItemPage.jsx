@@ -1,25 +1,45 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import api from "../services/api";
 import "./ItemPage.css";
 
 function ItemPage() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // Simulated item state. In a real app you'd fetch this by id.
-  const [item, setItem] = useState({
-    id: id || "1",
-    name: "Nome do patrimônio",
-    code: "COD-0001",
-    location: "Depósito A",
-    status: "Ativo",
-    createdAt: "2025-10-01 14:32",
-    createdBy: "fulano",
-  });
+  const [item, setItem] = useState(null);
+  const [creatorName, setCreatorName] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
-    // Aqui você poderia buscar os dados do item por `id`.
-    // Ex: fetch(`/api/items/${id}`).then(...)
+    let mounted = true;
+    async function fetchItem() {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await api.get(`/patrimonios/${id}`);
+        if (mounted) setItem(data);
+        // Buscar nome do usuário criador
+        if (data && data.criado_por) {
+          try {
+            const user = await api.get(`/usuarios/${data.criado_por}`);
+            if (user && user.email && mounted) setCreatorName(user.email);
+            else if (mounted) setCreatorName("");
+          } catch {
+            if (mounted) setCreatorName("");
+          }
+        } else if (mounted) setCreatorName("");
+      } catch {
+        setError("Erro ao carregar patrimônio");
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    }
+    if (id) fetchItem();
+    return () => { mounted = false; };
   }, [id]);
 
   function handleChange(e) {
@@ -27,30 +47,61 @@ function ItemPage() {
     setItem((prev) => ({ ...prev, [name]: value }));
   }
 
-  function handleSave(e) {
+  async function handleSave(e) {
     e.preventDefault();
-    // Substitua por chamada real de API
-    console.log("Salvando item:", item);
-    alert("Alterações salvas (simulado)");
+    if (!item) return;
+    try {
+      setSaving(true);
+      const payload = {
+        localizacao: item.localizacao,
+        status: item.status,
+      };
+      await api.put(`/patrimonios/${id}`, payload);
+      alert("Alterações salvas com sucesso!");
+    } catch {
+      alert("Erro ao salvar alterações.");
+    } finally {
+      setSaving(false);
+    }
   }
 
-  function handleDelete() {
+  async function handleDelete() {
     const ok = window.confirm(
       "Tem certeza que deseja deletar este patrimônio?"
     );
     if (!ok) return;
-    // Chamada real de API para deletar aqui
-    console.log("Deletando item id=", item.id);
-    alert("Patrimônio deletado (simulado)");
-    navigate("/home");
+    try {
+      setDeleting(true);
+      await api.del(`/patrimonios/${id}`);
+      // Notifica a sidebar para recarregar a lista
+      window.dispatchEvent(new Event('patrimonios:refresh'));
+      alert("Patrimônio deletado com sucesso!");
+      navigate("/patrimonios");
+    } catch {
+      alert("Erro ao deletar patrimônio.");
+    } finally {
+      setDeleting(false);
+    }
   }
+
+  function formatDate(dateString) {
+    if (!dateString) return "";
+    const d = new Date(dateString);
+    if (isNaN(d)) return dateString;
+    const pad = (n) => n.toString().padStart(2, '0');
+    return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${pad(d.getFullYear())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  }
+
+  if (loading) return <div className="page-wrap">Carregando...</div>;
+  if (error) return <div className="page-wrap">{error}</div>;
+  if (!item) return <div className="page-wrap">Patrimônio não encontrado</div>;
 
   return (
     <div className="page-wrap">
       <div className="item-page">
         <header className="item-header">
-          <h2 className="item-name">{item.name}</h2>
-          <div className="item-code">{item.code}</div>
+          <h2 className="item-name">{item.nome}</h2>
+          <div className="item-code">{item.identificacao_fisica}</div>
         </header>
 
         <form className="item-form" onSubmit={handleSave}>
@@ -58,8 +109,8 @@ function ItemPage() {
             <label htmlFor="location">Localização</label>
             <input
               id="location"
-              name="location"
-              value={item.location}
+              name="localizacao"
+              value={item.localizacao || ""}
               onChange={handleChange}
             />
           </div>
@@ -69,7 +120,7 @@ function ItemPage() {
             <select
               id="status"
               name="status"
-              value={item.status}
+              value={item.status || ""}
               onChange={handleChange}
             >
               <option>Ativo</option>
@@ -82,25 +133,26 @@ function ItemPage() {
           <fieldset className="readonly-group" disabled>
             <div className="form-row">
               <label>Data de criação</label>
-              <input value={item.createdAt} readOnly />
+              <input value={formatDate(item.created_at || "")} readOnly />
             </div>
 
             <div className="form-row">
               <label>Usuário que criou</label>
-              <input value={item.createdBy} readOnly />
+              <input value={creatorName} readOnly />
             </div>
           </fieldset>
 
           <div className="form-actions">
-            <button type="submit" className="btn btn-primary">
-              Salvar alterações
+            <button type="submit" className="btn btn-primary" disabled={saving}>
+              {saving ? "Salvando..." : "Salvar alterações"}
             </button>
             <button
               type="button"
               className="btn btn-danger"
               onClick={handleDelete}
+              disabled={deleting}
             >
-              Deletar patrimônio
+              {deleting ? "Deletando..." : "Deletar patrimônio"}
             </button>
           </div>
         </form>

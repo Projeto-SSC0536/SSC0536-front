@@ -30,6 +30,8 @@ function NewAssetsPage() {
         criado_por: 1,
       };
       await api.post("/patrimonios", body);
+      // Notifica a sidebar para recarregar a lista
+      window.dispatchEvent(new Event('patrimonios:refresh'));
       navigate("/patrimonios");
     } catch (err) {
       setError(err);

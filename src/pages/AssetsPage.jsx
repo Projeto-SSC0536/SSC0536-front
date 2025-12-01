@@ -74,7 +74,13 @@ function AssetsPage() {
           <tbody>
             {filtrados.map((p, index) => (
               <tr key={p.id ?? index}>
-                <td>{p.nome}</td>
+                <td
+                  onClick={() => p.id && navigate(`/patrimonios/${p.id}`)}
+                  style={{ cursor: p.id ? "pointer" : "default" }}
+                  title={p.id ? "Ver detalhes do patrimônio" : undefined}
+                >
+                  {p.nome}
+                </td>
                 <td>{p.identificacao_fisica || p.codigo}</td>
                 <td>{p.localizacao}</td>
                 <td>{p.status}</td>
