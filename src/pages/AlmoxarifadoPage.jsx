@@ -1,36 +1,47 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import "./AssetsPage.css";
 import { useNavigate } from "react-router-dom";
+import api from "../services/api";
 
-function AlmoxarifadoPage() {
+function AssetsPage() {
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
 
-  // Exemplo de dados
-  const [almoxarifado] = useState([
-    {
-      nome: "Mesa com 6 lugares",
-      codigo: "001",
-      localizacao: "Refeitório",
-      dataValidade: "2025-12-31",
-    },
-    {
-      nome: "Cadeira",
-      codigo: "002",
-      localizacao: "Refeitório",
-      dataValidade: "2026-06-30",
-    },
-    {
-      nome: "Aspirador de pó",
-      codigo: "003",
-      localizacao: "Depósito",
-      dataValidade: "2024-11-15",
-    },
-  ]);
+  const [assets, setAssets] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const filtrados = almoxarifado.filter((p) =>
-    p.nome.toLowerCase().includes(search.toLowerCase())
+  useEffect(() => {
+    let mounted = true;
+    async function load() {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await api.get("/almoxarifado");
+        if (mounted) setAssets(Array.isArray(data) ? data : []);
+      } catch (err) {
+        if (mounted) setError(err);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    }
+    load();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const filtrados = assets.filter((p) =>
+    (p.nome || "").toLowerCase().includes(search.toLowerCase())
   );
+
+  const formatDate = (iso) => {
+    if (!iso) return "";
+    const datePart = String(iso).split("T")[0];
+    const [year, month, day] = datePart.split("-");
+    if (year && month && day) return `${day}/${month}/${year}`;
+    return String(iso);
+  };
 
   return (
     <div className="assets-content">
@@ -52,35 +63,47 @@ function AlmoxarifadoPage() {
         </button>
       </div>
 
-      <table className="tabela-patrimonios">
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>Código</th>
-            <th>Localização</th>
-            <th>Data de validade</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filtrados.map((p, index) => (
-            <tr key={index}>
-              <td>{p.nome}</td>
-              <td>{p.codigo}</td>
-              <td>{p.localizacao}</td>
-              <td>{p.dataValidade}</td>
-            </tr>
-          ))}
-          {filtrados.length === 0 && (
+      {loading ? (
+        <div className="carregando">Carregando itens...</div>
+      ) : error ? (
+        <div className="erro">
+          Erro ao carregar: {error.message || String(error)}
+        </div>
+      ) : (
+        <table className="tabela-patrimonios">
+          <thead>
             <tr>
-              <td colSpan="4" className="sem-resultados">
-                Nenhum item encontrado
-              </td>
+              <th>Nome</th>
+              <th>Categoria</th>
+              <th>Data de validade</th>
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {filtrados.map((p, index) => (
+              <tr key={p.id ?? index}>
+                <td
+                  onClick={() => p.id && navigate(`/almoxarifado/${p.id}`)}
+                  style={{ cursor: p.id ? "pointer" : "default" }}
+                  title={p.id ? "Ver detalhes do item" : undefined}
+                >
+                  {p.nome}
+                </td>
+                <td>{p.categoria}</td>
+                <td>{formatDate(p.data_validade)}</td>
+              </tr>
+            ))}
+            {filtrados.length === 0 && (
+              <tr>
+                <td colSpan="3" className="sem-resultados">
+                  Nenhum item encontrado
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 }
 
-export default AlmoxarifadoPage;
+export default AssetsPage;
