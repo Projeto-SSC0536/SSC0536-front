@@ -1,11 +1,12 @@
 import Sidebar from "./sidebar.component";
 import { Outlet } from "react-router-dom";
+import "./layout.css";
 
 export default function Layout() {
   return (
-    <div style={{ display: "flex", height: "calc(100% - 40px)", width: "calc(100% - 220px)", marginLeft: "220px", marginTop: "40px"}}>
+    <div className="app-layout">
       <Sidebar />
-      <div >
+      <div className="app-content">
         <Outlet />
       </div>
     </div>

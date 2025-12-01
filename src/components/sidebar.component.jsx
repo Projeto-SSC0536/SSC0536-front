@@ -13,19 +13,11 @@ const mockList = [
     ],
   },
   {
-    id: "alimentos",
-    name: "Alimentos",
+    id: "almoxarifado",
+    name: "Almoxarifado",
     items: [
       { id: "item-arroz", name: "arroz" },
       { id: "item-feijao", name: "feijao" },
-    ],
-  },
-  {
-    id: "outros",
-    name: "Outros",
-    items: [
-      { id: "item-detergente", name: "detergente" },
-      { id: "item-papel-toalha", name: "papel toalha" },
     ],
   },
 ];
