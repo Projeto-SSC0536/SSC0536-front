@@ -28,12 +28,21 @@
 
 .barra-busca {
   flex: 1;
-  min-width: 200px;
+  min-width: 0;
   padding: 0.6rem 1rem;
   font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 8px;
   background-color: white;
+  color: #000;
+}
+
+.search-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 0;
 }
 
 .botao-primario {
@@ -84,3 +93,58 @@
     align-items: stretch;
   }
 }
+
+.filter-container {
+  position: relative;
+  display: inline-block;
+}
+
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0.25rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: rgba(0,0,0,0.7);
+  cursor: pointer;
+}
+
+.icon-button:hover {
+  background: rgba(0,0,0,0.04);
+}
+
+.filter-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background: #fff;
+  border: 1px solid #e6e6e6;
+  box-shadow: 0 6px 18px #fff;
+  border-radius: 8px;
+  padding: 0.5rem;
+  z-index: 40;
+  min-width: 200px;
+}
+
+.filter-menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.filter-menu li {
+  padding: 0.35rem 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filter-menu li:hover {
+  background: rgba(0,0,0,0.03);
+  border-radius: 6px;
+}
+
