@@ -28,7 +28,10 @@ export default function Sidebar() {
     async function loadData() {
       setLoading(true);
       try {
-        const patrimonios = await api.get("/patrimonios");
+        const [patrimonios, almoxarifado] = await Promise.all([
+          api.get("/patrimonios"),
+          api.get("/almoxarifado").catch(() => [])
+        ]);
         
         if (mounted) {
           const categoriesData = [
@@ -45,7 +48,12 @@ export default function Sidebar() {
             {
               id: "almoxarifado",
               name: "Almoxarifado",
-              items: []
+              items: Array.isArray(almoxarifado)
+                ? almoxarifado.map(a => ({
+                    id: a.id || a.codigo,
+                    name: a.nome || a.descricao || "Sem nome"
+                  }))
+                : []
             }
           ];
           setCategories(categoriesData);
