@@ -14,7 +14,6 @@
 main {
   flex: 1;
   width: 100%;
-  padding-top: 69px;
   align-content: start;
   align-self: center;
   display: flex;

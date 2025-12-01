@@ -2,7 +2,7 @@ import "./NewAssetPage.css";
 
 function NewAssetsPage() {
   return (
-    <main className="assets-content">
+    <main className="new-assets-content">
       <h1 className="titulo">Novo patrimônio</h1>
 
       <div className="campos-container">
@@ -28,16 +28,20 @@ function NewAssetsPage() {
         />
 
         <h4 className="h4">Status</h4>
-        <input
-          type="text"
-          placeholder="Insira o status do patrimônio"
-          className="campo"
-        />
+        <select id="status" name="status" className="campo">
+          <option value="" selected disabled>Insira o status do patrimônio</option>
+          <option>Ativo</option>
+          <option>Inativo</option>
+          <option>Em manutenção</option>
+          <option>Perdido</option>
+        </select>
       </div>
 
-      <button className="botao-primario">Adicionar Patrimônio</button>
-      <div style={{height: "12px"}}></div>
-      <button className="botao-danger">Cancelar</button>
+      <div className="form-actions">
+        <button className="botao-primario">Adicionar Patrimônio</button>
+        <div style={{height: "12px"}}></div>
+        <button className="botao-danger">Cancelar</button>
+      </div>
     </main>
   );
 }

@@ -46,56 +46,44 @@ function ItemPage() {
   return (
     <div className="page-wrap">
       <main className="item-page">
-        <div className="item-card">
-          <header className="item-header">
-            <h2 className="item-name">{item.name}</h2>
-            <div className="item-code">{item.code}</div>
-          </header>
+        <header className="item-header">
+          <h2 className="item-name">{item.name}</h2>
+          <div className="item-code">{item.code}</div>
+        </header>
 
-          <form className="item-form" onSubmit={handleSave}>
+        <form className="item-form" onSubmit={handleSave}>
+          <div className="form-row">
+            <label htmlFor="location">Localização</label>
+            <input id="location" name="location" value={item.location} onChange={handleChange} />
+          </div>
+
+          <div className="form-row">
+            <label htmlFor="status">Status</label>
+            <select id="status" name="status" value={item.status} onChange={handleChange}>
+              <option>Ativo</option>
+              <option>Inativo</option>
+              <option>Em manutenção</option>
+              <option>Perdido</option>
+            </select>
+          </div>
+
+          <fieldset className="readonly-group" disabled>
             <div className="form-row">
-              <label htmlFor="name">Nome</label>
-              <input id="name" name="name" value={item.name} onChange={handleChange} />
+              <label>Data de criação</label>
+              <input value={item.createdAt} readOnly />
             </div>
 
             <div className="form-row">
-              <label htmlFor="code">Código</label>
-              <input id="code" name="code" value={item.code} onChange={handleChange} />
+              <label>Usuário que criou</label>
+              <input value={item.createdBy} readOnly />
             </div>
+          </fieldset>
 
-            <div className="form-row">
-              <label htmlFor="location">Localização</label>
-              <input id="location" name="location" value={item.location} onChange={handleChange} />
-            </div>
-
-            <div className="form-row">
-              <label htmlFor="status">Status</label>
-              <select id="status" name="status" value={item.status} onChange={handleChange}>
-                <option>Ativo</option>
-                <option>Inativo</option>
-                <option>Em manutenção</option>
-                <option>Perdido</option>
-              </select>
-            </div>
-
-            <fieldset className="readonly-group" disabled>
-              <div className="form-row">
-                <label>Data de criação</label>
-                <input value={item.createdAt} readOnly />
-              </div>
-
-              <div className="form-row">
-                <label>Usuário que criou</label>
-                <input value={item.createdBy} readOnly />
-              </div>
-            </fieldset>
-
-            <div className="form-actions">
-              <button type="submit" className="btn btn-primary">Salvar alterações</button>
-              <button type="button" className="btn btn-danger" onClick={handleDelete}>Deletar patrimônio</button>
-            </div>
-          </form>
-        </div>
+          <div className="form-actions">
+            <button type="submit" className="btn btn-primary">Salvar alterações</button>
+            <button type="button" className="btn btn-danger" onClick={handleDelete}>Deletar patrimônio</button>
+          </div>
+        </form>
       </main>
     </div>
   );
