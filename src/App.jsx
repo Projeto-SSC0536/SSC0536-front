@@ -29,10 +29,10 @@ function App() {
               </ProtectedRoute>
             }>
               <Route path="/patrimonios" element={<AssetsPage />} />
-              <Route path="/:patrimonios/:item" element={<ItemPage />} />
-              <Route path="/:patrimonios/novo" element={<NewAssetsPage />} />
+              <Route path="/patrimonios/:id" element={<ItemPage />} />
+              <Route path="/patrimonios/novo" element={<NewAssetsPage />} />
               <Route path="/almoxarifado" element={<AlmoxarifadoPage />} />
-              <Route path="/:almoxarifado/:item" element={<ItemPage />} />
+              <Route path="/almoxarifado/:id" element={<ItemPage />} />
             </Route>
           </Routes>
         </main>
